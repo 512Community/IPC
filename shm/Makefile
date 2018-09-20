@@ -1,4 +1,4 @@
-ifdef ($(SHM_CONFIG),1)
+ifeq ($(SHM_CONFIG),1)
 CC=gcc
 CXX=g++
 
