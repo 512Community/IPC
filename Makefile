@@ -1,4 +1,4 @@
-DIRS = ./sem ./shm
+include config
 
 all:
 	$(foreach DIR, $(DIRS), $(MAKE) -C $(DIR) ;)
