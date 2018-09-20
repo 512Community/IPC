@@ -15,18 +15,19 @@ LIB=
 target=libsem.so
 
 $(target):$(OBJ)
-	$(CC) -shared $^ -o $@ $(LIB)
-	mv $(target) ../
+	@$(CC) -shared $^ -o $@ $(LIB)
+	@mv $(target) ../
 
 %.o:%.cpp
-	$(CXX) $(CXXFLAGS) -c $< -o $@ $(INCLUDE)
+	@$(CXX) $(CXXFLAGS) -c $< -o $@ $(INCLUDE)
 
 %.o:%.c
-	$(CC) $(CFLAGS) -c $< -o $@ $(INCLUDE)
+	@$(CC) $(CFLAGS) -c $< -o $@ $(INCLUDE)
 
 clean:
-	rm -rf $(OBJ) ../$(target)
+	@rm -rf $(OBJ) ../$(target)
 else
 echo:
-	echo "Skip semaphore libsem.so "
+	@echo "Skip semaphore libsem.so "
+clean:
 endif

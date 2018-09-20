@@ -15,11 +15,11 @@ LIB= -L../ -lsem -lshm -lpthread -lrt
 target=a.out
 
 $(target):$(OBJ)
-	$(CXX)  -Wl,-rpath=./ $^ -o $@ $(LIB)
-	mv $(target) ../
+	@$(CXX)  -Wl,-rpath=./ $^ -o $@ $(LIB)
+	@mv $(target) ../
 
 %.o:%.cpp
-	$(CXX) $(CXXFLAGS) -c $< -o $@ $(INCLUDE)
+	@$(CXX) $(CXXFLAGS) -c $< -o $@ $(INCLUDE)
 
 clean:
-	rm -rf $(OBJ) ../$(target)
+	@rm -rf $(OBJ) ../$(target)
