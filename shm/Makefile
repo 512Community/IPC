@@ -1,3 +1,4 @@
+ifdef ($(SHM_CONFIG),1)
 CC=gcc
 CXX=g++
 
@@ -25,3 +26,7 @@ $(target):$(OBJ)
 
 clean:
 	rm -rf $(OBJ) ../$(target)
+else
+echo:
+	echo "Skip share memory libshm.so"
+endif

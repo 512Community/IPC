@@ -1,3 +1,4 @@
+ifeq ($(SEM_CONFIG),1)
 CC=gcc
 CXX=g++
 
@@ -25,3 +26,7 @@ $(target):$(OBJ)
 
 clean:
 	rm -rf $(OBJ) ../$(target)
+else
+echo:
+	echo "Skip semaphore libsem.so "
+endif
