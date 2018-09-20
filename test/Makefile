@@ -8,14 +8,14 @@ OBJ= $(patsubst %.cpp, %.o, $(wildcard *.cpp))
 OBJ+= $(patsubst %.cpp, %.o, $(wildcard $(THREAD_TEST_PATH)/*.cpp))
 
 
-INCLUDE= -I../sem/include -I../shm/include  -I$(THREAD_TEST_PATH)
+INCLUDE= -I../include -I$(THREAD_TEST_PATH)
 
-LIB= -L../ -lsem -lshm -lpthread -lrt
+LIB= -L$(LIB_PATH) -lsem -lshm -lpthread -lrt
 
 target=a.out
 
 $(target):$(OBJ)
-	@$(CXX)  -Wl,-rpath=./ $^ -o $@ $(LIB)
+	@$(CXX)  -Wl,-rpath=./lib $^ -o $@ $(LIB)
 	@mv $(target) ../
 
 %.o:%.cpp

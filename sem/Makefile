@@ -16,7 +16,7 @@ target=libsem.so
 
 $(target):$(OBJ)
 	@$(CC) -shared $^ -o $@ $(LIB)
-	@mv $(target) ../
+	@mv $(target) $(LIB_PATH)
 
 %.o:%.cpp
 	@$(CXX) $(CXXFLAGS) -c $< -o $@ $(INCLUDE)
@@ -25,7 +25,7 @@ $(target):$(OBJ)
 	@$(CC) $(CFLAGS) -c $< -o $@ $(INCLUDE)
 
 clean:
-	@rm -rf $(OBJ) ../$(target)
+	@rm -rf $(OBJ)
 else
 echo:
 	@echo "Skip semaphore libsem.so "

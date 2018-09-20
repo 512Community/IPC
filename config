@@ -2,6 +2,11 @@
 export DEFINE_CONFIG = -DSEM_SHM_THREAD
 ###选择编译路径###
 export DIRS = ./sem ./shm ./test
+###指定IPC导出头文件路径###
+export SEM_INCLUDE = ./sem/include
+export SHM_INCLUDE = ./shm/include
 ###控制IPC模块
 export SEM_CONFIG=1
 export SHM_CONFIG=1
+###存放库文件路径###
+export LIB_PATH =../lib
