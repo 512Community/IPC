@@ -76,8 +76,6 @@ begin:
 		if (rc == -1)
 			goto err;
 
-		printf("%d\n", buf.shm_nattch);
-
 		if (buf.shm_nattch == 0) {
 			rc = shmctl(shmid, IPC_RMID, 0);
 			if (rc == -1)
