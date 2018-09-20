@@ -9,10 +9,12 @@
 
 #include <system_sem.h>
 #include <posix_sem.h>
+#include <system_shm.h>
 #include <posix_shm.h>
-posix_sem *sem;
-posix_shm *shm;
-//system_sem * sem;
+//posix_sem *sem;
+//posix_shm *shm;
+system_sem * sem;
+system_shm *shm;
 int num = 0;
 
 static void test(const char *data,int len)
@@ -49,8 +51,11 @@ int sem_shm_thread()
 	int rc;
 	pthread_t fd[2];
 
-	sem = new posix_sem();
-	shm = new posix_shm();
+	//sem = new posix_sem();
+	//shm = new posix_shm();
+
+	sem = new system_sem();
+	shm = new system_shm();
 
 	rc = sem->create();
 	if (rc == -1) {
