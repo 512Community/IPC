@@ -1,10 +1,10 @@
 #ifndef __MY_system_shm_CLASS__
 #define __MY_system_shm_CLASS__
 
-#include <base.h>
 #include <sys/sem.h>
+#include <base_shm.h>
 
-class system_shm : public base_sem
+class system_shm : public base_shm
 {
 public:
 	system_shm();
@@ -14,7 +14,7 @@ public:
 	~system_shm();
 
 	int create();
-	int open(void **ptr);
+	int open();
 	int close();
 	int destroy();
 
@@ -24,7 +24,7 @@ private:
 	mode_t m_mode;
 	size_t m_size;
 
-	int m_semid;
+	int m_shmid;
 
 };
 #endif

@@ -4,125 +4,116 @@
 #include <fcntl.h>           /* For O_* constants */
 #include <sys/stat.h>        /* For mode constants */
 #include <sys/ipc.h>
-#include <sys/sem.h>
+#include <sys/shm.h>
 #include <sys/types.h>
 
-#include <system_sem.h>
+#include <system_shm.h>
 
 
 #define DEFAULT_KEY 1234
-#define DEFAULT_NUM 1
+#define DEFAULT_SIZE 1024
 #define DEFAULT_MODE 0666
 
-#ifdef _SEM_SEMUN_UNDEFINED
-union semun {
-	int              val;    /* Value for SETVAL */
-	struct semid_ds *buf;    /* Buffer for IPC_STAT, IPC_SET */
-	unsigned short  *array;  /* Array for GETALL, SETALL */
-	struct seminfo  *__buf;  /* Buffer for IPC_INFO
-				    (Linux-specific) */
-};
-#endif
-
-system_sem::system_sem()
+system_shm::system_shm()
 {
 	m_key = DEFAULT_KEY;
-	m_numsems = DEFAULT_NUM;
+	m_size = DEFAULT_SIZE;
 	m_mode = DEFAULT_MODE;
 
-	m_semid = -1;
+	m_shmid = -1;
 }
 
-system_sem::system_sem(key_t key)
+system_shm::system_shm(key_t key)
 {
 	m_key = key;
-	m_numsems = DEFAULT_NUM;
+	m_size = DEFAULT_SIZE;
 	m_mode = DEFAULT_MODE;
 
-	m_semid = -1;
+	m_shmid = -1;
 }
 
-system_sem::system_sem(key_t key, int numsems)
+system_shm::system_shm(key_t key, size_t size)
 {
 	m_key = key;
-	m_numsems = numsems;
+	m_size = size;
 	m_mode = DEFAULT_MODE;
 
-	m_semid = -1;
+	m_shmid = -1;
 }
 
-system_sem::system_sem(key_t key, int numsems, mode_t mode)
+system_shm::system_shm(key_t key, size_t size, mode_t mode)
 {
 	m_key = key;
-	m_numsems = numsems;
+	m_size = size;
 	m_mode = mode;
 
-	m_semid = -1;
+	m_shmid = -1;
 }
 
-system_sem::~system_sem()
+system_shm::~system_shm()
 {
 
 }
 
-int system_sem::create()
+int system_shm::create()
 {
-	int semid, rc;
-	union semun arg;
-	struct sembuf sembuf;
+	int shmid, rc;
+	struct shmid_ds buf;
 
-	semid = semget(m_key, m_numsems, IPC_CREAT | IPC_EXCL | m_mode);
-	if(semid == -1)
+begin:
+	shmid = shmget(m_key, m_size, IPC_CREAT | IPC_EXCL | m_mode);
+	if (shmid == -1 && errno != EEXIST)
 		goto err;
 
-	arg.val = 0;
-	rc = semctl(semid, 0, SETVAL, arg);
-	if (rc == -1)
-		goto err;
+	if(errno == EEXIST) {
+		errno = 0;
+		shmid = shmget(m_key, 0, 0);
+		if (shmid == -1)
+			goto err;
 
-	sembuf.sem_num = 0;
-	sembuf.sem_op = 1;
-	sembuf.sem_flg = 0;
 
-	rc = semop(semid, &sembuf, 1);
-	if (rc == -1)
-		goto err;
-
-	m_semid = semid;
-
-	return 0;
-err:
-	return -1;
-}
-
-int system_sem::open()
-{
-	int semid, rc;
-	union semun arg;
-	struct semid_ds ds;
-	int i;
-
-	semid = semget(m_key, 1, m_mode);
-	if(semid == -1)
-		goto err;
-
-	arg.buf = &ds;
-
-	for (i = 0; i < 10; i++) {
-		rc = semctl(semid, 0, IPC_STAT, arg);
+		rc = shmctl(shmid, IPC_STAT, &buf);
 		if (rc == -1)
 			goto err;
 
-		if(ds.sem_otime != 0)
-			break;
+		printf("%d\n", buf.shm_nattch);
 
-		usleep(10 * 1000);
+		if (buf.shm_nattch == 0) {
+			rc = shmctl(shmid, IPC_RMID, 0);
+			if (rc == -1)
+				goto err;
+
+			goto begin;
+		}
+	} else {
+		goto err;
 	}
 
-	if (ds.sem_otime == 0)
+
+	m_ptr = shmat(shmid, NULL, 0);
+	if (m_ptr == (void *)-1)
+		goto err;
+	
+	m_shmid = shmid;
+	 
+	return 0;
+err:
+	return -1;
+}
+
+int system_shm::open()
+{
+	int shmid;
+
+	shmid = shmget(m_key, 0, 0);
+	if (shmid == -1)
 		goto err;
 
-	m_semid = semid;
+	m_ptr = shmat(shmid, NULL, 0);
+	if (m_ptr == (void *)-1)
+		goto err;
+
+	m_shmid = shmid;
 
 	return 0;
 
@@ -130,34 +121,12 @@ err:
 	return -1;
 }
 
-int system_sem::lock()
-{
-	struct sembuf sembuf;
-
-	sembuf.sem_num = 0;
-	sembuf.sem_op = -1;
-	sembuf.sem_flg = SEM_UNDO;
-
-	return m_semid == -1 ? -1 : semop(m_semid, &sembuf, 1);
-}
-
-int system_sem::unlock()
-{
-	struct sembuf sembuf;
-
-	sembuf.sem_num = 0;
-	sembuf.sem_op = 1;
-	sembuf.sem_flg = SEM_UNDO;
-
-	return m_semid == -1 ? -1 : semop(m_semid, &sembuf, 1);
-}
-
-int system_sem::close()
+int system_shm::close()
 {
 	return 0;
 }
 
-int system_sem::destroy()
+int system_shm::destroy()
 {
-	return semctl(m_semid, 0, IPC_RMID);
+	return shmctl(m_shmid, IPC_RMID, 0);
 }

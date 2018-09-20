@@ -7,7 +7,7 @@ CFLAGS=-Werror -g -fPIC
 
 OBJ= $(patsubst %.cpp, %.o, $(wildcard *.cpp))
 OBJ+= $(patsubst %.cpp, %.o, $(wildcard ./posix_shm/*.cpp))
-#OBJ+= $(patsubst %.cpp, %.o, $(wildcard ./system_shm//*.cpp))
+OBJ+= $(patsubst %.cpp, %.o, $(wildcard ./system_shm/*.cpp))
 
 INCLUDE= -I./include
 LIB=
