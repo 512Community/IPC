@@ -1,0 +1,2 @@
+export DEFINE_CONFIG = -DSEM_SHM_THREAD
+export DIRS = ./sem ./shm ./test
