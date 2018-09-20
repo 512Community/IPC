@@ -98,4 +98,5 @@ x509.genkey
 # Yytek files
 #
 *.drv
+a.out
 config.mk
