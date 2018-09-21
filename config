@@ -1,12 +1,15 @@
 ###控制宏来选择测试模块###
 export DEFINE_CONFIG = -DSEM_SHM_THREAD
+export DEFINE_CONFIG += -DDEBUG_LOG -DTIME_LOG
 ###选择编译路径###
-export DIRS = ./sem ./shm ./test
+export DIRS = ./sem ./shm ./msg_log ./test
 ###指定IPC导出头文件路径###
 export SEM_INCLUDE = ./sem/include
 export SHM_INCLUDE = ./shm/include
+export LOG_INCLUDE = ./msg_log/include
 ###控制IPC模块
 export SEM_CONFIG=1
 export SHM_CONFIG=1
+export LOG_CONFIG=1
 ###存放库文件路径###
 export LIB_PATH =../lib

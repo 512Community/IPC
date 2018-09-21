@@ -15,6 +15,7 @@ init:
 	@test -d include || mkdir include
 	@cp $(SEM_INCLUDE)/* ./include/
 	@cp $(SHM_INCLUDE)/* ./include/
+	@cp $(LOG_INCLUDE)/* ./include/
 
 PHONY +=clean
 

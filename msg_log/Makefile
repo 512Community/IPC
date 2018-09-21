@@ -12,17 +12,17 @@ LIB=
 target=liblog.so
 
 $(target):$(OBJ)
-	$(CC) -shared $^ -o $@ $(LIB)
-	mv $(target) $(LIB_PATH)
+	@$(CC) -shared $^ -o $@ $(LIB)
+	@mv $(target) $(LIB_PATH)
 
 %.o:%.cpp
-	$(CXX) $(CXXFLAGS) -c $< -o $@ $(INCLUDE)
+	@$(CXX) $(CXXFLAGS) -c $< -o $@ $(INCLUDE)
 
 %.o:%.c
-	$(CC) $(CFLAGS) -c $< -o $@ $(INCLUDE)
+	@$(CC) $(CFLAGS) -c $< -o $@ $(INCLUDE)
 
 clean:
-	rm -rf $(OBJ)
+	@rm -rf $(OBJ)
 else
 echo:
 	@echo "Skip msg log liblog.so "

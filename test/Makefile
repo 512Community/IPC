@@ -1,6 +1,6 @@
 CXX=g++
 
-CXXFLAGS +=-Werror -g  $(DEFINE_CONFIG)
+CXXFLAGS +=-Werror -g
 
 THREAD_TEST_PATH=./sem_shm_test/thread
 
@@ -10,7 +10,15 @@ OBJ+= $(patsubst %.cpp, %.o, $(wildcard $(THREAD_TEST_PATH)/*.cpp))
 
 INCLUDE= -I../include -I$(THREAD_TEST_PATH)
 
-LIB= -L$(LIB_PATH) -lsem -lshm -lpthread -lrt
+LIB= -L$(LIB_PATH) -lpthread -lrt
+
+ifeq ($(SHM_CONFIG),1)
+LIB+=-lshm
+CXXFLAGS += $(DEFINE_CONFIG)
+endif
+ifeq ($(SEM_CONFIG),1)
+LIB+=-lsem
+endif
 
 target=a.out
 
