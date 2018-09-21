@@ -19,6 +19,9 @@ endif
 ifeq ($(SEM_CONFIG),1)
 LIB+=-lsem
 endif
+ifeq ($(LOG_CONFIG),1)
+LIB+=-lmsg_log
+endif
 
 target=a.out
 

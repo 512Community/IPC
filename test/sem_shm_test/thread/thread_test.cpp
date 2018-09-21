@@ -11,6 +11,7 @@
 #include <posix_sem.h>
 #include <system_shm.h>
 #include <posix_shm.h>
+#include <msg_log.h>
 //posix_sem *sem;
 //posix_shm *shm;
 system_sem * sem;
@@ -27,7 +28,7 @@ static void test(const char *data,int len)
 	i = 10;
 	for(i = 10; i> 0; i--) {
 		rc = sem->lock();
-		printf("%s\n", p);
+		ESLOG_ERR("%s\n", p);
 		memcpy(p, data, len);
 		sem->unlock();
 		sleep(1);
