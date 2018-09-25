@@ -5,32 +5,16 @@
 #include <string.h>
 #include <stdarg.h>
 #include <sys/time.h>
-#define LOG_ERR 0
-#define LOG_INFO 1
+#include <pthread.h>
 
-void LogString(int type, const char *szFormat, ...)
-{
-#ifdef DEBUG_LOG
-    switch(type)
-    {
-        case LOG_ERR:
-            printf("\033[31m%s\033[0m", szFormat);
-            break;
-        case LOG_INFO:
-            printf("%s", szFormat);
-            break;
-        default:
-            break;
-    }
-#endif
-}
 void ESLOG_ERR(const char *szFormat, ...)
 {
+#ifdef DEBUG_LOG
     char pDate[512] = {0};
 #ifdef TIME_LOG
     struct timeval start;
     gettimeofday(&start, NULL);
-    sprintf(pDate, "time->%ld:%ld [%d-%ld] %s(%d) ERR:", start.tv_sec, start.tv_usec, getpid(), pthread_self(), __FILE__, __LINE__);
+    sprintf(pDate, "time->%ld:%ld [%d-%ld] %s:(%d) ERR:", start.tv_sec, start.tv_usec, getpid(), pthread_self(), __FILE__, __LINE__);
 #else //NOT TIME_LOG
     sprintf(pDate, "[%d-%ld] %s(%d) ERR:", getpid(), pthread_self(), __FILE__, __LINE__);
 #endif
@@ -41,10 +25,13 @@ void ESLOG_ERR(const char *szFormat, ...)
     vsnprintf(szBufTemp, 512 - strlen(pDate), szFormat, valist);
     va_end(valist);
 
-    LogString(LOG_ERR, pDate);
+    printf("\033[31m%s\033[0m", pDate);
+#endif /* DEBUG_LOG */
 }
+
 void ESLOG_INFO(const char *szFormat, ...)
 {
+#ifdef DEBUG_LOG
     char pDate[512] = {0};
 #ifdef TIME_LOG
     struct timeval start;
@@ -61,8 +48,10 @@ void ESLOG_INFO(const char *szFormat, ...)
     vsnprintf(szBufTemp, 512 - strlen(pDate), szFormat, valist);
     va_end(valist);
 
-    LogString(LOG_INFO, pDate);
+    printf("%s", pDate);
+#endif /* DEBUG_LOG */
 }
+
 void ESLOG_BIN(const char * name,char * data,unsigned int len)
 {
 #ifdef DEBUG_LOG

@@ -9,7 +9,7 @@ OBJ+= $(patsubst %.c, %.o, $(wildcard ./msg_log/*.c))
 INCLUDE= -I./include
 LIB=
 
-target=liblog.so
+target=libmsg_log.so
 
 $(target):$(OBJ)
 	@$(CC) -shared $^ -o $@ $(LIB)
