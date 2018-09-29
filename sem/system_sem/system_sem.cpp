@@ -24,6 +24,9 @@ union semun {
 };
 #endif
 
+static struct sembuf const up = {0, 1, SEM_UNDO};
+static struct sembuf const down = {0, -1, SEM_UNDO};
+
 system_sem::system_sem()
 {
 	m_key = DEFAULT_KEY;
@@ -132,24 +135,12 @@ err:
 
 int system_sem::lock()
 {
-	struct sembuf sembuf;
-
-	sembuf.sem_num = 0;
-	sembuf.sem_op = -1;
-	sembuf.sem_flg = SEM_UNDO;
-
-	return m_semid == -1 ? -1 : semop(m_semid, &sembuf, 1);
+	return m_semid == -1 ? -1 : semop(m_semid, (struct sembuf *)&down, 1);
 }
 
 int system_sem::unlock()
 {
-	struct sembuf sembuf;
-
-	sembuf.sem_num = 0;
-	sembuf.sem_op = 1;
-	sembuf.sem_flg = SEM_UNDO;
-
-	return m_semid == -1 ? -1 : semop(m_semid, &sembuf, 1);
+	return m_semid == -1 ? -1 : semop(m_semid, (struct sembuf *)&up, 1);
 }
 
 int system_sem::close()
