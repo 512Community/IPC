@@ -10,7 +10,7 @@ OBJ+= $(patsubst %.cpp, %.o, $(wildcard ./posix_shm/*.cpp))
 OBJ+= $(patsubst %.cpp, %.o, $(wildcard ./system_shm/*.cpp))
 
 INCLUDE= -I./include
-LIB=
+LIB= -lrt
 
 target=libshm.so
 
