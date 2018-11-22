@@ -7,7 +7,7 @@ class base_sem
 {
 public:
 	base_sem(){};
-	~base_sem(){};
+	virtual ~base_sem(){};
 
 	virtual int create() = 0;
 	virtual int open() = 0;

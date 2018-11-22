@@ -7,7 +7,7 @@ class base_shm
 {
 public:
 	base_shm(){};
-	~base_shm(){};
+	virtual ~base_shm(){};
 
 	virtual int create() = 0;
 	virtual int open() = 0;
